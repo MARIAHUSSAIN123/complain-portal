@@ -1,22 +1,24 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./Pages/Login";
-import Signup from "./Pages/Signup";
-import StudentDashboard from "./Pages/StudentDashboard";
-import AdminDashboard from "./Pages/AdminDashboard";
 import "./App.css";
-function App() {
+
+import Admin from "./pages/Admin";
+import Complain from "./pages/Complain";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import MyComplain from "./pages/MyComplain";
+import SignUp from "./pages/SignUp";
+
+export default function App() {
   return (
-    <div className="min-h-screen .bg-gradient-to-br from-indigo-100 via-white to-blue-100">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/student" element={<StudentDashboard />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Routes>
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+   <Routes>
+  <Route path='/' element={<SignUp/>}/>
+  <Route path='/login' element={<Login/>}/>
+  <Route path='/dashboard' element={<Dashboard/>}/>
+  <Route path='/complain' element={<Complain/>}/>
+  <Route path='/mycomplain' element={<MyComplain/>}/>
+  <Route path='/admin' element={<Admin/>}/>
+</Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;

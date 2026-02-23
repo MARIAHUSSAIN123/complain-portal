@@ -1,123 +1,89 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, database } from "../firebase";
 import { ref, set } from "firebase/database";
+import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 
-function Signup() {
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("student");
+export default function Signup() {
 
   const navigate = useNavigate();
 
-  const handleSignup = function (e) {
+  const register = (e) => {
     e.preventDefault();
 
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
     createUserWithEmailAndPassword(auth, email, password)
-      .then(function (userCredential) {
+      .then((userCredential) => {
 
-        const user = userCredential.user;
-
-        set(ref(database, "users/" + user.uid), {
+        // 🔥 Save user name in Realtime Database
+        set(ref(database, "users/" + userCredential.user.uid), {
           name: name,
-          email: email,
-          role: role
-        })
-          .then(function () {
-            Swal.fire("Account Created 🎉", "Signup Successful", "success");
-            navigate("/");
-          })
-          .catch(function (error) {
-            Swal.fire("Error", error.message, "error");
-          });
+          email: email
+        });
 
+        Swal.fire("Success 🎉", "Account Created", "success");
+
+        navigate("/login");
       })
-      .catch(function (error) {
-        Swal.fire("Signup Failed ❌", error.message, "error");
+      .catch((error) => {
+        Swal.fire("Error ❌", error.message, "error");
       });
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex flex-col items-center justify-center p-6">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 via-indigo-500 to-purple-600">
 
-      {/* Top Branding */}
-      <div className="text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg">
-          Complaint Management Portal
+      <div className="bg-white/20 backdrop-blur-xl shadow-2xl rounded-3xl p-10 w-[400px] text-white">
+
+        <h1 className="text-3xl font-bold text-center mb-4">
+          Complaint Portal
         </h1>
-        <p className="text-white/80 mt-3 text-lg">
-          Create your account and start reporting issues
-        </p>
-      </div>
 
-      {/* Glass Signup Card */}
-      <div className="bg-white/20 backdrop-blur-xl shadow-2xl rounded-3xl p-10 w-full max-w-md border border-white/30">
-
-        <h2 className="text-2xl font-bold text-center mb-6 text-white">
-          Create Your Account
-        </h2>
-
-        <form onSubmit={handleSignup} className="space-y-5">
+        <form onSubmit={register} className="space-y-5">
 
           <input
-            type="text"
+            name="name"
             placeholder="Enter Name"
-            className="w-full p-3 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-            onChange={function (e) { setName(e.target.value) }}
+            className="w-full p-3 rounded-xl bg-white/80 text-black"
             required
           />
 
           <input
+            name="email"
             type="email"
             placeholder="Enter Email"
-            className="w-full p-3 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-            onChange={function (e) { setEmail(e.target.value) }}
+            className="w-full p-3 rounded-xl bg-white/80 text-black"
             required
           />
 
           <input
+            name="password"
             type="password"
             placeholder="Enter Password"
-            className="w-full p-3 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-            onChange={function (e) { setPassword(e.target.value) }}
+            className="w-full p-3 rounded-xl bg-white/80 text-black"
             required
           />
-
-          <select
-            className="w-full p-3 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-            onChange={function (e) { setRole(e.target.value) }}
-          >
-            <option value="student">Student</option>
-            <option value="admin">Admin</option>
-          </select>
 
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl shadow-lg hover:scale-105 transition duration-300"
+            className="w-full bg-white text-indigo-600 font-semibold py-3 rounded-xl"
           >
-            Signup
+            Register
           </button>
 
         </form>
 
-        <p className="text-center mt-6 text-white/90">
+        <p className="text-center mt-4 text-sm">
           Already have an account?{" "}
-          <Link
-            to="/"
-            className="font-semibold underline hover:text-yellow-200 transition"
-          >
+          <Link to="/login" className="font-bold underline">
             Login
           </Link>
         </p>
 
       </div>
-
     </div>
   );
 }
-
-export default Signup;
